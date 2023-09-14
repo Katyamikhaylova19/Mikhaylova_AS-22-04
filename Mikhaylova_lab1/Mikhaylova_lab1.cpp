@@ -5,84 +5,121 @@ using namespace std;
 
 struct Pipe
 {
-	string kilometerMark;
-	double length;
-	int diameter;
-	bool isRepairing;
+	string kilometerMark = "";
+	double length = 0;
+	int diameter = 0;
+	bool isRepairing = true;
 };
 
 struct CompressorStation
 {
-	string name;
-	int workshopCount;
-	int activeWorkshopCount;
-	char efficiency;
+	string name = "";
+	int workshopCount = 0;
+	int activeWorkshopCount = 0;
+	char efficiency = 'A';
 };
 
-void AddPipe(vector<Pipe>& pipes)
+void CheckInput(int& var)
+{
+	cin >> var;
+	while (var <= 0)
+	{
+		cout << "Ошибка! Введите корректные данные: ";
+		cin >> var;
+	}
+}
+void CheckInput(double& var)
+{
+	cin >> var;
+	while (var <= 0)
+	{
+		cout << "Ошибка! Введите корректные данные: ";
+		cin >> var;
+	}
+}
+
+Pipe AddPipe()
 {
 	Pipe newPipe;
 	cout << "Введите километровую отметку: ";
 	cin.ignore();
 	getline(cin, newPipe.kilometerMark);
-	cout << "Введите длину трубы: ";
-	cin >> newPipe.length;
-	cout << "Введите диаметр трубы: ";
-	cin >> newPipe.diameter;
-	cout << "Труба в ремонте? (1 - в ремонте, пр. - не в ремонте) ";
+	cout << "Введите длину трубы (в километрах): ";
+	CheckInput(newPipe.length);
+	cout << "Введите диаметр трубы (в миллиметрах): ";
+	CheckInput(newPipe.diameter);
+	cout << "Труба в ремонте? (1 - в ремонте, 0 - не в ремонте) ";
 	int input;
 	cin >> input;
+	while (!(input == 0 || input == 1))
+	{
+		cout << "Ошибка! Введите корректные данные: ";
+		cin >> input;
+	}
 	newPipe.isRepairing = input == 1;
 
-	pipes.push_back(newPipe);
+	return newPipe;
 }
 
-void AddCompressorStation(vector<CompressorStation>& compressorStations)
+CompressorStation AddCompressorStation()
 {
 	CompressorStation newCompressorStation;
 	cout << "Введите название компрессорной станции: ";
 	cin.ignore();
 	getline(cin, newCompressorStation.name);
 	cout << "Введите количество цехов: ";
-	cin >> newCompressorStation.workshopCount;
+	CheckInput(newCompressorStation.workshopCount);
 	cout << "Введите количество цехов в работе: ";
-	cin >> newCompressorStation.activeWorkshopCount;
-	cout << "Введите эффективность: ";
+	CheckInput(newCompressorStation.activeWorkshopCount);
+	while (newCompressorStation.workshopCount < newCompressorStation.activeWorkshopCount)
+	{
+		cout << "Ошибка! Количество цехов в работе не может превышать количество цехов."<<endl
+			<<"Введите корректные данные :";
+		cin >> newCompressorStation.activeWorkshopCount;
+	}
+	cout << "Введите эффективность от A до G: ";
 	cin >> newCompressorStation.efficiency;
-
-	compressorStations.push_back(newCompressorStation);
+	while (!((int)newCompressorStation.efficiency >= 'A' && (int)newCompressorStation.efficiency <= 'G'))
+	{
+		cout << "Ошибка! Введите корректные данные: ";
+		cin >> newCompressorStation.efficiency;
+	}
+	return newCompressorStation;
 }
 
-void ShowPipes(const vector<Pipe>& pipes)
+void ShowPipes(const Pipe& newPipe)
 {
-	for (const auto& pipe : pipes) //foreach
+	if (newPipe.length == 0)
+		cout << "Трубы нет." << endl;
+	else
 	{
-		cout << endl << "Километрова отметка: " << pipe.kilometerMark << endl;
-		cout << "Длина трубы: " << pipe.length << endl;
-		cout << "Диаметр трубы: " << pipe.diameter << endl;
-		if (pipe.isRepairing)
+		cout << endl << "Километровая отметка: " << newPipe.kilometerMark << endl;
+		cout << "Длина трубы: " << newPipe.length << " км" << endl;
+		cout << "Диаметр трубы: " << newPipe.diameter << " мм" << endl;
+		if (newPipe.isRepairing)
 			cout << "Труба в ремонте." << endl << endl;
 		else
 			cout << "Труба работает исправно." << endl << endl;
 	}
 }
 
-void ShowCompressorStations(const vector<CompressorStation>& compressorStations)
+void ShowCompressorStations(const CompressorStation& newCompressorStation)
 {
-	for (const auto& compressorStation : compressorStations) //foreach
+	if (newCompressorStation.workshopCount == 0)
+		cout << "Комрессорной станции нет." << endl;
+	else 
 	{
-		cout << endl << "Название компрессорной станции: " << compressorStation.name<< endl;
-		cout << "Количество цехов: " << compressorStation.workshopCount << endl;
-		cout << "Количество цехов в работе: " << compressorStation.activeWorkshopCount << endl;
-		cout << "Эффективность: " << compressorStation.efficiency << endl;
-
+		cout << endl << "Название компрессорной станции: " << newCompressorStation.name << endl;
+		cout << "Количество цехов: " << newCompressorStation.workshopCount << endl;
+		cout << "Количество цехов в работе: " << newCompressorStation.activeWorkshopCount << endl;
+		cout << "Эффективность: " << newCompressorStation.efficiency << endl << endl;
 	}
 }
 
 int main()
 {
-	vector<Pipe> pipes = {};
-	vector<CompressorStation> compressorStations = {};
+	Pipe pipe;
+	CompressorStation cs;
 
 	int commandNumber;
 	setlocale(LC_ALL, "Rus");//Устанавливаем русскоязычный ввод и вывод
@@ -96,23 +133,27 @@ int main()
 			<< "5. Редактировать КС" << endl
 			<< "6. Сохранить" << endl
 			<< "7. Загрузить" << endl
-			<< "0 и др. Выход из программы" << endl << endl
+			<< "0. Выход из программы" << endl << endl
 			<< "Что вы хотите сделать: ";
 		cin >> commandNumber;
 		switch (commandNumber)
 		{
+		case 0:
+			cout << "Выход из программы" << endl;
+			return 0;
+			break;
 		case 1:
 			cout << "Добавление трубы"<<endl;
-			AddPipe(pipes);
+			pipe = AddPipe();
 			break;
 		case 2:
 			cout << "Добавление КС"<<endl;
-			AddCompressorStation(compressorStations);
+			cs = AddCompressorStation();
 			break;
 		case 3:
 			cout << "Просмотр объектов"<<endl;
-			ShowPipes(pipes);
-			ShowCompressorStations(compressorStations);
+			ShowPipes(pipe);
+			ShowCompressorStations(cs);
 			break;
 		case 4:
 			cout << "Редактирование трубы"<<endl;
@@ -128,7 +169,7 @@ int main()
 			break;
 
 		default:
-			return 0;
+			cout << "Ошибка! Введите корректные данные" << endl;
 			break;
 		}
 	}
