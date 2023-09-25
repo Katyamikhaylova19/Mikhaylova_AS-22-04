@@ -17,59 +17,57 @@ struct CompressorStation
 	string name = "";
 	int workshopCount = 0;
 	int activeWorkshopCount = 0;
-	char efficiency = 'A';
+	string efficiency = "A";
 };
 
-void CheckInput(int& var)
+void InputInt(int& var, bool canEqualToZero = false)
 {
 	cin >> var;
-	while (cin.fail() || var <= 0)
+	while (cin.fail() || cin.peek() != '\n' || (canEqualToZero ? var < 0 : var <= 0))
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
-		cout << "Ошибка! Введите корректные данные: ";
+		cout << "Error! Please enter correct data: ";
 		cin >> var;
 	}
 }
 
-void CheckInput(double& var)
+void InputDouble(double& var)
 {
 	cin >> var;
-	while (cin.fail() || var <= 0)
+	while (cin.fail() || cin.peek()!='\n' || var <= 0)
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
-		cout << "Ошибка! Введите корректные данные: ";
+		cout << "Error! Please enter correct data: ";
 		cin >> var;
 	}
 }
 
-void CheckInput(bool& var)
+void InputBool(bool& var)
 {
-	int input;
-	cin >> input;
-	while (cin.fail() || !(input == 0 || input == 1))
+	cin >> var;
+	while (cin.fail() || cin.peek()!='\n')
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
-		cout << "Ошибка! Введите корректные данные: ";
-		cin >> input;
+		cout << "Error! Please enter correct data: ";
+		cin >> var;
 	}
-	var = input == 1;
 }
 
 Pipe AddPipe()
 {
 	Pipe newPipe;
-	cout << "Введите километровую отметку: ";
+	cout << "Enter kilometer mark: ";
 	cin.ignore();
 	getline(cin, newPipe.kilometerMark);
-	cout << "Введите длину трубы (в километрах): ";
-	CheckInput(newPipe.length);
-	cout << "Введите диаметр трубы (в миллиметрах): ";
-	CheckInput(newPipe.diameter);
-	cout << "Труба в ремонте? (1 - в ремонте, 0 - не в ремонте) ";
-	CheckInput(newPipe.isRepairing);
+	cout << "Enter the pipe length (in kilometers): ";
+	InputDouble(newPipe.length);
+	cout << "Enter the pipe diameter (in millimeters): ";
+	InputInt(newPipe.diameter);
+	cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
+	InputBool(newPipe.isRepairing);
 
 	return newPipe;
 }
@@ -77,24 +75,24 @@ Pipe AddPipe()
 CompressorStation AddCompressorStation()
 {
 	CompressorStation newCompressorStation;
-	cout << "Введите название компрессорной станции: ";
+	cout << "Enter the name of the Compressor station: ";
 	cin.ignore();
 	getline(cin, newCompressorStation.name);
-	cout << "Введите количество цехов: ";
-	CheckInput(newCompressorStation.workshopCount);
-	cout << "Введите количество цехов в работе: ";
-	CheckInput(newCompressorStation.activeWorkshopCount);
+	cout << "Enter the number of workshops: ";
+	InputInt(newCompressorStation.workshopCount);
+	cout << "Enter the number of active workshops: ";
+	InputInt(newCompressorStation.activeWorkshopCount, true);
 	while (newCompressorStation.workshopCount < newCompressorStation.activeWorkshopCount)
 	{
-		cout << "Ошибка! Количество цехов в работе не может превышать количество цехов."<<endl
-			<<"Введите корректные данные: ";
-		cin >> newCompressorStation.activeWorkshopCount;
+		cout << "Error! The number of active workshops cant be more than the total number of workshops"<<endl
+			<<"Please enter correct data: ";
+		InputInt(newCompressorStation.activeWorkshopCount, true);
 	}
-	cout << "Введите эффективность от A до G: ";
+	cout << "Enter efficiency from A to G: ";
 	cin >> newCompressorStation.efficiency;
-	while (!(newCompressorStation.efficiency >= 'A' && newCompressorStation.efficiency <= 'G'))
+	while (!(newCompressorStation.efficiency >= "A" && newCompressorStation.efficiency <= "G" && newCompressorStation.efficiency.length() == 1))
 	{
-		cout << "Ошибка! Введите корректные данные: ";
+		cout << "Error! Please enter correct data: ";
 		cin >> newCompressorStation.efficiency;
 	}
 	return newCompressorStation;
@@ -104,17 +102,17 @@ void ShowPipes(const Pipe& newPipe)
 {
 	if (newPipe.length == 0)
 	{
-		cout << "Трубы нет." << endl;
+		cout << "Pipe not found." << endl;
 	}
 	else
 	{
-		cout << endl << "Километровая отметка: " << newPipe.kilometerMark << endl;
-		cout << "Длина трубы: " << newPipe.length << " км" << endl;
-		cout << "Диаметр трубы: " << newPipe.diameter << " мм" << endl;
+		cout << endl << "Kilometer mark: " << newPipe.kilometerMark << endl;
+		cout << "Pipe length: " << newPipe.length << " km" << endl;
+		cout << "Pipe diameter: " << newPipe.diameter << " mm" << endl;
 		if (newPipe.isRepairing)
-			cout << "Труба в ремонте." << endl << endl;
+			cout << "Pipe under repair." << endl << endl;
 		else
-			cout << "Труба работает исправно." << endl << endl;
+			cout << "Pipe is in work." << endl << endl;
 	}
 }
 
@@ -122,14 +120,14 @@ void ShowCompressorStations(const CompressorStation& newCompressorStation)
 {
 	if (newCompressorStation.workshopCount == 0)
 	{
-		cout << "Комрессорной станции нет." << endl;
+		cout << "Compressor station not found." << endl;
 	}
 	else 
 	{
-		cout << endl << "Название компрессорной станции: " << newCompressorStation.name << endl;
-		cout << "Количество цехов: " << newCompressorStation.workshopCount << endl;
-		cout << "Количество цехов в работе: " << newCompressorStation.activeWorkshopCount << endl;
-		cout << "Эффективность: " << newCompressorStation.efficiency << endl << endl;
+		cout << endl << "Name of the compressor station: " << newCompressorStation.name << endl;
+		cout << "Number of workshops: " << newCompressorStation.workshopCount << endl;
+		cout << "Number of active workshops: " << newCompressorStation.activeWorkshopCount << endl;
+		cout << "Efficiency: " << newCompressorStation.efficiency << endl << endl;
 	}
 }
 
@@ -138,51 +136,51 @@ void EditPipe(Pipe& editPipe)
 	int commandNumber;
 	if (editPipe.length == 0)
 	{
-		cout << "Трубы нет." << endl;
+		cout << "Pipe not found." << endl;
 	}
 	else
 	{
 		while (editPipe.isRepairing == true)
 		{
-			cout << "Труба в ремонте. Хотите исправить это?" << endl;
-			cout << "1. Да" << endl
-				<< "2. Нет" << endl
-				<< "Ваш выбор: ";
-			CheckInput(commandNumber);
+			cout << "The pipe is under repair. Want to change this?" << endl;
+			cout << "1. Yes" << endl
+				<< "2. No" << endl
+				<< "Your choice: ";
+			InputInt(commandNumber);
 			switch (commandNumber)
 			{
 			case 1:
 				editPipe.isRepairing = false;
-				cout << "Теперь труба работает исправно." << endl;
+				cout << "Pipe is in work." << endl;
 				return;
 				break;
 			case 2:
 				return;
 				break;
 			default:
-				cout << "Ошибка! Введите корректные данные" << endl;
+				cout << "Error! Please enter correct data: " << endl;
 				break;
 			}
 		}
 		while (editPipe.isRepairing == false)
 		{
-			cout << "Труба не в ремонте. Хотите исправить это?" << endl;
-			cout << "1. Да" << endl
-				<< "2. Нет" << endl
-				<<"Ваш выбор: ";
-			CheckInput(commandNumber);
+			cout << "Pipe is in work. Want to change this?" << endl;
+			cout << "1. Yes" << endl
+				<< "2. No" << endl
+				<<"Your choice: ";
+			InputInt(commandNumber);
 			switch (commandNumber)
 			{
 			case 1:
 				editPipe.isRepairing = true;
-				cout << "Теперь труба в ремонте." << endl;
+				cout << "Pipe under repair." << endl;
 				return;
 				break;
 			case 2:
 				return;
 				break;
 			default:
-				cout << "Ошибка! Введите корректные данные" << endl;
+				cout << "Error! Please enter correct data: " << endl;
 				break;
 			}
 		}
@@ -193,27 +191,27 @@ void EditCompressorStation(CompressorStation& editCompressorStation)
 {
 	int commandNumber;
 	if (editCompressorStation.workshopCount == 0)
-		cout << "Компрессорной станции нет." << endl;
+		cout << "Compressor station not found." << endl;
 	else
 	{
 		while (true)
 		{
-			cout << "Хотите поменять количество активных цехов?" << endl
-				<< "1. Да" << endl
-				<< "2. Нет" << endl
-				<< "Ваш выбор: ";
-			CheckInput(commandNumber);
+			cout << "Want to change the number of active workshops?" << endl
+				<< "1. Yes" << endl
+				<< "2. No" << endl
+				<< "Your choice: ";
+			InputInt(commandNumber);
 			switch (commandNumber)
 			{
 			case 1:
-				cout << "Введите количество активных цехов: ";
-				CheckInput(editCompressorStation.activeWorkshopCount);
+				cout << "Enter the number of active workshops: ";
+				InputInt(editCompressorStation.activeWorkshopCount, true);
 				while (editCompressorStation.activeWorkshopCount > editCompressorStation.workshopCount)
 				{
-					cout << "Ошибка!\nКоличество активных цехов не должно превышать количество цехов." << endl
-						<< "Количество цехов равно " << editCompressorStation.workshopCount << endl
-						<< "Введите корректные данные : ";
-					CheckInput(editCompressorStation.activeWorkshopCount);
+					cout << "Error!\n The number of active workshops cant be more than the total number of workshops." << endl
+						<< "The number of workshops is " << editCompressorStation.workshopCount << endl
+						<< "Please enter correct data: ";
+					InputInt(editCompressorStation.activeWorkshopCount, true);
 				}
 				return;
 				break;
@@ -221,7 +219,7 @@ void EditCompressorStation(CompressorStation& editCompressorStation)
 				return;
 				break;
 			default:
-				cout << "Ошибка! Введите корректные данные" << endl;
+				cout << "Error! Please enter correct data: " << endl;
 				break;
 			}
 		}
@@ -234,7 +232,8 @@ void SavePipe(const Pipe& savePipe, ofstream& fout)
 	fout << savePipe.kilometerMark << endl;
 	fout << savePipe.diameter << endl;
 	fout << savePipe.isRepairing << endl;
-	cout << "Данные трубы успешно сохранены в файл!" << endl;
+	cout << "Pipe data successfully saved to file!" << endl;
+	fout.close();
 }
 
 void SaveCompressorStation(const CompressorStation& saveCompressorStation, ofstream& fout)
@@ -243,7 +242,7 @@ void SaveCompressorStation(const CompressorStation& saveCompressorStation, ofstr
 	fout << saveCompressorStation.workshopCount << endl;
 	fout << saveCompressorStation.activeWorkshopCount << endl;
 	fout << saveCompressorStation.efficiency << endl;
-	cout << "Данные компрессорной станции успешно сохранены в файл!" << endl;
+	cout << "Compressor station data successfully saved to file!" << endl;
 }
 
 void LoadPipe(Pipe& loadPipe, ifstream& fin)
@@ -253,7 +252,7 @@ void LoadPipe(Pipe& loadPipe, ifstream& fin)
 	getline(fin, loadPipe.kilometerMark);
 	fin >> loadPipe.diameter;
 	fin >> loadPipe.isRepairing;
-	cout << "Данные трубы загрузились успешно!" << endl;
+	cout << "Pipe data loaded successfully!" << endl;
 }
 
 void LoadCompressorStation(CompressorStation& loadCompressorStation, ifstream& fin)
@@ -263,7 +262,7 @@ void LoadCompressorStation(CompressorStation& loadCompressorStation, ifstream& f
 	fin >> loadCompressorStation.workshopCount;
 	fin >> loadCompressorStation.activeWorkshopCount;
 	fin >> loadCompressorStation.efficiency;
-	cout << "Данные компрессорной станции загрузились успешно!" << endl;
+	cout << "Compressor station data loaded successfully!" << endl;
 }
 
 int main()
@@ -272,91 +271,120 @@ int main()
 	CompressorStation cs;
 
 	int commandNumber;
-	setlocale(LC_ALL, "Rus");
 	while (true)
 	{
-		cout << "МЕНЮ:" << endl
-			<< "1. Добавить трубу" << endl
-			<< "2. Добавить КС" << endl
-			<< "3. Просмотр всех объектов" << endl
-			<< "4. Редактировать трубу" << endl
-			<< "5. Редактировать КС" << endl
-			<< "6. Сохранить" << endl
-			<< "7. Загрузить" << endl
-			<< "8. Выход из программы" << endl << endl
-			<< "Что вы хотите сделать: ";
-		CheckInput(commandNumber);
+		cout << "MENU:" << endl
+			<< "0. Exit the program" << endl
+			<< "1. Add pipe" << endl
+			<< "2. Add compressor station" << endl
+			<< "3. View all objects" << endl
+			<< "4. Edit pipe" << endl
+			<< "5. Edit compressor station" << endl
+			<< "6. Save" << endl
+			<< "7. Load" << endl << endl
+			<< "What do you want to do: ";
+		InputInt(commandNumber, true);
 		switch (commandNumber)
 		{
+		case 0:
+			cout << "[ Exit the program ]" << endl;
+			return 0;
+			break;
 		case 1:
-			cout << "[ Добавление трубы ]"<<endl;
+			cout << "[ Add pipe ]"<<endl;
 			pipe = AddPipe();
 			break;
 		case 2:
-			cout << "[ Добавление КС ]"<<endl;
+			cout << "[ Add compressor station ]"<<endl;
 			cs = AddCompressorStation();
 			break;
 		case 3:
-			cout << "[ Просмотр объектов ]"<<endl;
+			cout << "[ View all objects ]"<<endl;
 			ShowPipes(pipe);
 			ShowCompressorStations(cs);
 			break;
 		case 4:
-			cout << "[ Редактирование трубы ]"<<endl;
+			cout << "[ Edit pipe ]"<<endl;
 			EditPipe(pipe);
 			break;
 		case 5:
-			cout << "[ Редактирование КС ]"<<endl;
+			cout << "[ Edit compressor station ]"<<endl;
 			EditCompressorStation(cs);
 			break;
 		case 6:
 		{
-			cout << "[ Сохранение ]" << endl;
+			cout << "[ Save ]" << endl;
 			ofstream fout;
 			string fileName;
-			cout << "Введите имя файла: ";
+			cout << "Enter file name: ";
 			cin.ignore();
 			getline(cin, fileName);
 			fout.open(fileName);
 			if (!fout.is_open())
 			{
-				cout << "Ошибка открытия файла!" << endl;
+				cout << "File opening error!" << endl;
 			}
 			else
 			{
-				SavePipe(pipe, fout);
-				SaveCompressorStation(cs, fout);
-				fout.close();
+				if (pipe.length == 0)
+					fout << 0 << endl;
+				else
+				{
+					fout << 1 << endl;
+					SavePipe(pipe, fout);
+				}
+				if (cs.workshopCount == 0)
+					fout << 0 << endl;
+				else
+				{
+					fout << 1 << endl;
+					SaveCompressorStation(cs, fout);
+				}
 			}
+			fout.close();
+
 		}
 			break;
 		case 7:
 		{
-			cout << "[ Загрузка ]" << endl;
+			cout << "[ Load ]" << endl;
 			ifstream fin;
 			string fileName;
-			cout << "Введите имя файла: ";
+			int input;
+			cout << "Enter file name: ";
 			cin.ignore();
 			getline(cin, fileName);
 			fin.open(fileName);
 			if (!fin.is_open())
 			{
-				cout << "Ошибка открытия файла!" << endl;
+				cout << "File opening error!" << endl;
 			}
 			else
 			{
-				LoadPipe(pipe, fin);
-				LoadCompressorStation(cs, fin);
+				fin >> input;
+				if (input == 1)
+				{
+					LoadPipe(pipe, fin);
+				}
+				else
+				{
+					cout << "Pipe not found." << endl;
+				}
+				fin >> input;
+				if (input == 1)
+				{
+					LoadCompressorStation(cs, fin);
+				}
+				else
+				{
+					cout << "Compressor station not found." << endl;
+				}
 				fin.close();
 			}
 		}
 			break;
-		case 8:
-			cout << "[ Выход из программы ]" << endl;
-			return 0;
-			break;
 		default:
-			cout << "Ошибка! Введите корректные данные" << endl;
+			cout << "Error! Please enter correct data: " << endl;
 			break;
 		}
 	}
