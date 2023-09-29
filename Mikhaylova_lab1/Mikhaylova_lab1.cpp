@@ -9,7 +9,12 @@ struct Pipe
 	string kilometerMark = "";
 	double length = 0;
 	int diameter = 0;
-	bool isRepairing = true;
+	bool isRepairing;
+
+	void PrintPipeStatus()
+	{
+		cout << (isRepairing ? "Pipe is under repair" : "Pipe is in work")<< endl;
+	}
 };
 
 struct CompressorStation
@@ -140,49 +145,23 @@ void EditPipe(Pipe& editPipe)
 	}
 	else
 	{
-		while (editPipe.isRepairing == true)
+		editPipe.PrintPipeStatus();
+		cout <<endl<< "What to change this?"<<endl
+			<< "1. Yes" << endl
+			<< "2. No" << endl
+			<< "Your choice: ";
+		InputInt(commandNumber);
+		switch (commandNumber)
 		{
-			cout << "The pipe is under repair. Want to change this?" << endl;
-			cout << "1. Yes" << endl
-				<< "2. No" << endl
-				<< "Your choice: ";
-			InputInt(commandNumber);
-			switch (commandNumber)
-			{
-			case 1:
-				editPipe.isRepairing = false;
-				cout << "Pipe is in work." << endl;
-				return;
-				break;
-			case 2:
-				return;
-				break;
-			default:
-				cout << "Error! Please enter correct data: " << endl;
-				break;
-			}
-		}
-		while (editPipe.isRepairing == false)
-		{
-			cout << "Pipe is in work. Want to change this?" << endl;
-			cout << "1. Yes" << endl
-				<< "2. No" << endl
-				<<"Your choice: ";
-			InputInt(commandNumber);
-			switch (commandNumber)
-			{
-			case 1:
-				editPipe.isRepairing = true;
-				cout << "Pipe under repair." << endl;
-				return;
-				break;
-			case 2:
-				return;
-				break;
-			default:
-				cout << "Error! Please enter correct data: " << endl;
-				break;
-			}
+		case 1:
+			editPipe.isRepairing = !editPipe.isRepairing;
+			editPipe.PrintPipeStatus();
+			break;
+		case 2:
+			return;
+		default:
+			cout << "Error! Please enter correct data " << endl;
+			break;
 		}
 	}
 }
