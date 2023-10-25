@@ -182,10 +182,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CompressorStation.cpp" />
     <ClCompile Include="Mikhaylova_lab1.cpp" />
+    <ClCompile Include="Pipe.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CompressorStation.h" />
     <ClInclude Include="Mikhaylova_lab1.h" />
+    <ClInclude Include="Pipe.h" />
+    <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
