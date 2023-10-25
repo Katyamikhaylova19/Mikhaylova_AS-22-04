@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <string>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -25,7 +26,8 @@ struct CompressorStation
 	string efficiency = "A";
 };
 
-void InputInt(int& var, bool canEqualToZero = false)
+template <typename T>
+void InputCorrectNumber(T& var, bool canEqualToZero = false)
 {
 	cin >> var;
 	while (cin.fail() || cin.peek() != '\n' || (canEqualToZero ? var < 0 : var <= 0))
@@ -37,61 +39,38 @@ void InputInt(int& var, bool canEqualToZero = false)
 	}
 }
 
-void InputDouble(double& var)
-{
-	cin >> var;
-	while (cin.fail() || cin.peek()!='\n' || var <= 0)
-	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Error! Please enter correct data: ";
-		cin >> var;
-	}
-}
-
-void InputBool(bool& var)
-{
-	cin >> var;
-	while (cin.fail() || cin.peek()!='\n')
-	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Error! Please enter correct data: ";
-		cin >> var;
-	}
-}
-
-Pipe AddPipe()
+void AddPipe(vector<Pipe>& pipes)
 {
 	Pipe newPipe;
 	cout << "Enter kilometer mark: ";
 	cin.ignore();
 	getline(cin, newPipe.kilometerMark);
 	cout << "Enter the pipe length (in kilometers): ";
-	InputDouble(newPipe.length);
+	InputCorrectNumber(newPipe.length);
 	cout << "Enter the pipe diameter (in millimeters): ";
-	InputInt(newPipe.diameter);
+	InputCorrectNumber(newPipe.diameter);
 	cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
-	InputBool(newPipe.isRepairing);
+	InputCorrectNumber(newPipe.isRepairing, true);
 
-	return newPipe;
+	pipes.push_back(newPipe);
+;
 }
 
-CompressorStation AddCompressorStation()
+void AddCompressorStation(vector<CompressorStation>& compressorStations)
 {
 	CompressorStation newCompressorStation;
 	cout << "Enter the name of the Compressor station: ";
 	cin.ignore();
 	getline(cin, newCompressorStation.name);
 	cout << "Enter the number of workshops: ";
-	InputInt(newCompressorStation.workshopCount);
+	InputCorrectNumber(newCompressorStation.workshopCount);
 	cout << "Enter the number of active workshops: ";
-	InputInt(newCompressorStation.activeWorkshopCount, true);
+	InputCorrectNumber(newCompressorStation.activeWorkshopCount, true);
 	while (newCompressorStation.workshopCount < newCompressorStation.activeWorkshopCount)
 	{
 		cout << "Error! The number of active workshops cant be more than the total number of workshops"<<endl
 			<<"Please enter correct data: ";
-		InputInt(newCompressorStation.activeWorkshopCount, true);
+		InputCorrectNumber(newCompressorStation.activeWorkshopCount, true);
 	}
 	cout << "Enter efficiency from A to G: ";
 	cin >> newCompressorStation.efficiency;
@@ -100,17 +79,17 @@ CompressorStation AddCompressorStation()
 		cout << "Error! Please enter correct data: ";
 		cin >> newCompressorStation.efficiency;
 	}
-	return newCompressorStation;
+	compressorStations.push_back(newCompressorStation);
 }
 
-void ShowPipes(const Pipe& newPipe)
+void ShowPipes(const vector<Pipe>& pipes)
 {
-	if (newPipe.length == 0)
+	if (pipes.size() == 0)
 	{
 		cout << "Pipe not found." << endl;
+		return;
 	}
-	else
-	{
+	for (const auto& newPipe : pipes) {
 		cout << endl << "Kilometer mark: " << newPipe.kilometerMark << endl;
 		cout << "Pipe length: " << newPipe.length << " km" << endl;
 		cout << "Pipe diameter: " << newPipe.diameter << " mm" << endl;
@@ -121,18 +100,19 @@ void ShowPipes(const Pipe& newPipe)
 	}
 }
 
-void ShowCompressorStations(const CompressorStation& newCompressorStation)
+void ShowCompressorStations(const vector<CompressorStation>& compressorStations)
 {
-	if (newCompressorStation.workshopCount == 0)
+	if (compressorStations.size() == 0)
 	{
 		cout << "Compressor station not found." << endl;
+		return;
 	}
-	else 
-	{
+	for (const auto& newCompressorStation : compressorStations) {
 		cout << endl << "Name of the compressor station: " << newCompressorStation.name << endl;
 		cout << "Number of workshops: " << newCompressorStation.workshopCount << endl;
 		cout << "Number of active workshops: " << newCompressorStation.activeWorkshopCount << endl;
 		cout << "Efficiency: " << newCompressorStation.efficiency << endl << endl;
+
 	}
 }
 
@@ -150,7 +130,7 @@ void EditPipe(Pipe& editPipe)
 			<< "1. Yes" << endl
 			<< "2. No" << endl
 			<< "Your choice: ";
-		InputInt(commandNumber);
+		InputCorrectNumber(commandNumber);
 		switch (commandNumber)
 		{
 		case 1:
@@ -179,24 +159,22 @@ void EditCompressorStation(CompressorStation& editCompressorStation)
 				<< "1. Yes" << endl
 				<< "2. No" << endl
 				<< "Your choice: ";
-			InputInt(commandNumber);
+			InputCorrectNumber(commandNumber);
 			switch (commandNumber)
 			{
 			case 1:
 				cout << "Enter the number of active workshops: ";
-				InputInt(editCompressorStation.activeWorkshopCount, true);
+				InputCorrectNumber(editCompressorStation.activeWorkshopCount, true);
 				while (editCompressorStation.activeWorkshopCount > editCompressorStation.workshopCount)
 				{
 					cout << "Error!\n The number of active workshops cant be more than the total number of workshops." << endl
 						<< "The number of workshops is " << editCompressorStation.workshopCount << endl
 						<< "Please enter correct data: ";
-					InputInt(editCompressorStation.activeWorkshopCount, true);
+					InputCorrectNumber(editCompressorStation.activeWorkshopCount, true);
 				}
 				return;
-				break;
 			case 2:
 				return;
-				break;
 			default:
 				cout << "Error! Please enter correct data: " << endl;
 				break;
@@ -212,7 +190,6 @@ void SavePipe(const Pipe& savePipe, ofstream& fout)
 	fout << savePipe.diameter << endl;
 	fout << savePipe.isRepairing << endl;
 	cout << "Pipe data successfully saved to file!" << endl;
-	fout.close();
 }
 
 void SaveCompressorStation(const CompressorStation& saveCompressorStation, ofstream& fout)
@@ -244,10 +221,26 @@ void LoadCompressorStation(CompressorStation& loadCompressorStation, ifstream& f
 	cout << "Compressor station data loaded successfully!" << endl;
 }
 
+template <typename T>
+T& SelectElement(vector <T>& elements)
+{
+	int number;
+	cout << "Enter number: ";
+	InputCorrectNumber(number);
+	while (number > elements.size())
+	{
+		cout << "Error!\nThe number exceeds the number of elements." << endl
+			<< "Number of elements: " << elements.size() << endl
+			<< "Please enter correct data: ";
+		InputCorrectNumber(number);
+	}
+	return elements[number - 1];
+}
+
 int main()
 {
-	Pipe pipe;
-	CompressorStation cs;
+	vector <Pipe> pipes = {};
+	vector <CompressorStation> compressorStations = {};
 
 	int commandNumber;
 	while (true)
@@ -262,7 +255,7 @@ int main()
 			<< "6. Save" << endl
 			<< "7. Load" << endl << endl
 			<< "What do you want to do: ";
-		InputInt(commandNumber, true);
+		InputCorrectNumber(commandNumber, true);
 		switch (commandNumber)
 		{
 		case 0:
@@ -271,24 +264,24 @@ int main()
 			break;
 		case 1:
 			cout << "[ Add pipe ]"<<endl;
-			pipe = AddPipe();
+			AddPipe(pipes);
 			break;
 		case 2:
 			cout << "[ Add compressor station ]"<<endl;
-			cs = AddCompressorStation();
+			AddCompressorStation(compressorStations);
 			break;
 		case 3:
 			cout << "[ View all objects ]"<<endl;
-			ShowPipes(pipe);
-			ShowCompressorStations(cs);
+			ShowPipes(pipes);
+			ShowCompressorStations(compressorStations);
 			break;
 		case 4:
 			cout << "[ Edit pipe ]"<<endl;
-			EditPipe(pipe);
+			EditPipe(SelectElement(pipes));
 			break;
 		case 5:
 			cout << "[ Edit compressor station ]"<<endl;
-			EditCompressorStation(cs);
+			EditCompressorStation(SelectElement(compressorStations));
 			break;
 		case 6:
 		{
@@ -305,20 +298,12 @@ int main()
 			}
 			else
 			{
-				if (pipe.length == 0)
-					fout << 0 << endl;
-				else
-				{
-					fout << 1 << endl;
+				fout << pipes.size() << endl;
+				for (const auto& pipe : pipes)
 					SavePipe(pipe, fout);
-				}
-				if (cs.workshopCount == 0)
-					fout << 0 << endl;
-				else
-				{
-					fout << 1 << endl;
-					SaveCompressorStation(cs, fout);
-				}
+				fout << compressorStations.size() << endl;
+				for (const auto& compressorStation : compressorStations)
+					SaveCompressorStation(compressorStation, fout);
 			}
 			fout.close();
 
@@ -340,24 +325,22 @@ int main()
 			}
 			else
 			{
-				fin >> input;
-				if (input == 1)
-				{
+				int pipeSize;
+				fin >> pipeSize;
+				if (pipeSize == 0)
+					cout << "Pipes not found." << endl;
+				pipes.resize(pipeSize);
+				for (auto& pipe : pipes)
 					LoadPipe(pipe, fin);
-				}
-				else
-				{
-					cout << "Pipe not found." << endl;
-				}
-				fin >> input;
-				if (input == 1)
-				{
-					LoadCompressorStation(cs, fin);
-				}
-				else
-				{
-					cout << "Compressor station not found." << endl;
-				}
+
+				int compressorStationSize;
+				fin >> compressorStationSize;
+				if (compressorStationSize == 0)
+					cout << "Compressor stations not found." << endl;
+				compressorStations.resize(compressorStationSize);
+				for (auto& compressorStation : compressorStations)
+					LoadCompressorStation(compressorStation, fin);
+
 				fin.close();
 			}
 		}
