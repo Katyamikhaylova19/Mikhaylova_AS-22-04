@@ -1,40 +1,18 @@
 #include "Pipe.h"
 
+int Pipe::maxId = 0;
+
+int Pipe::GetId()
+{
+	return Id;
+}
 
 void Pipe::PrintPipeStatus()
 {
 	cout << (isRepairing ? "Pipe is under repair" : "Pipe is in work") << endl;
 }
 
-
-Pipe Pipe::AddPipe()
-{
-	Pipe newPipe;
-	cout << "Enter kilometer mark: ";
-	cin.ignore();
-	getline(cin, newPipe.kilometerMark);
-	cout << "Enter the pipe length (in kilometers): ";
-	InputCorrectNumber(newPipe.length);
-	cout << "Enter the pipe diameter (in millimeters): ";
-	InputCorrectNumber(newPipe.diameter);
-	cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
-	InputCorrectNumber(newPipe.isRepairing, true);
-	return newPipe;
-}
-
-
-void Pipe::ShowPipe(const Pipe& newPipe) const
-{
-	cout << endl << "Kilometer mark: " << newPipe.kilometerMark << endl;
-	cout << "Pipe length: " << newPipe.length << " km" << endl;
-	cout << "Pipe diameter: " << newPipe.diameter << " mm" << endl;
-	if (newPipe.isRepairing)
-		cout << "Pipe under repair." << endl << endl;
-	else
-		cout << "Pipe is in work." << endl << endl;
-}
-
-void Pipe::EditPipe(Pipe& editPipe)
+void EditPipe(Pipe& editPipe)
 {
 	int commandNumber;
 	if (editPipe.length == 0)
@@ -64,21 +42,56 @@ void Pipe::EditPipe(Pipe& editPipe)
 	}
 }
 
-void Pipe::SavePipe(const Pipe& savePipe, ofstream& fout) const
+ostream& operator<<(ostream& out, const Pipe& pipe)
 {
-	fout << savePipe.length << endl;
-	fout << savePipe.kilometerMark << endl;
-	fout << savePipe.diameter << endl;
-	fout << savePipe.isRepairing << endl;
-	cout << "Pipe data successfully saved to file!" << endl;
+	out << endl << "Pipe Id: " << pipe.Id << endl;
+	out << "Kilometer mark: " << pipe.kilometerMark << endl;
+	out << "Pipe length: " << pipe.length << " km" << endl;
+	out << "Pipe diameter: " << pipe.diameter << " mm" << endl;
+	if (pipe.isRepairing)
+		out << "Pipe under repair." << endl << endl;
+	else
+		out << "Pipe is in work." << endl << endl;
+	return out;
 }
 
-void Pipe::LoadPipe(Pipe& loadPipe, ifstream& fin)
+istream& operator>>(istream& in, Pipe& pipe)
 {
-	fin >> loadPipe.length;
-	fin.ignore();
-	getline(fin, loadPipe.kilometerMark);
-	fin >> loadPipe.diameter;
-	fin >> loadPipe.isRepairing;
-	cout << "Pipe data loaded successfully!" << endl;
+	pipe.Id = ++pipe.maxId;
+	cout << "Id: " << pipe.Id << endl;
+	cout << "Enter kilometer mark: ";
+	in.ignore();
+	getline(in, pipe.kilometerMark);
+	cout << "Enter the pipe length (in kilometers): ";
+	InputCorrectNumber(pipe.length);
+	cout << "Enter the pipe diameter (in millimeters): ";
+	InputCorrectNumber(pipe.diameter);
+	cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
+	InputCorrectNumber(pipe.isRepairing, true);
+	return in;
 }
+
+ofstream& operator<<(ofstream& fout, const Pipe& pipe)
+{
+	fout << pipe.Id << endl;
+	fout << pipe.length << endl;
+	fout << pipe.kilometerMark << endl;
+	fout << pipe.diameter << endl;
+	fout << pipe.isRepairing << endl;
+	cout << "Pipe data successfully saved to file!" << endl;
+	return fout;
+}
+
+ifstream& operator>>(ifstream& fin, Pipe& pipe)
+{
+	fin >> pipe.Id;
+	pipe.maxId = pipe.Id;
+	fin >> pipe.length;
+	fin.ignore();
+	getline(fin, pipe.kilometerMark);
+	fin >> pipe.diameter;
+	fin >> pipe.isRepairing;
+	cout << "Pipe data loaded successfully!" << endl;
+	return fin;
+}
+

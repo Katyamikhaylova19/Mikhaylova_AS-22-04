@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <unordered_map>
 #include "Utilities.h"
 #include "Pipe.h"
 #include "CompressorStation.h"
@@ -9,25 +10,25 @@
 using namespace std;
 
 template <typename T>
-T& SelectElement(vector <T>& elements)
+T& SelectElement(unordered_map <int, T>& elements)
 {
-	int number;
+	int Id;
 	cout << "Enter number: ";
-	InputCorrectNumber(number);
-	while (number > elements.size())
+	InputCorrectNumber(Id);
+	while (elements.find(Id) == elements.end())
 	{
 		cout << "Error!\nThe number exceeds the number of elements." << endl
 			<< "Number of elements: " << elements.size() << endl
 			<< "Please enter correct data: ";
-		InputCorrectNumber(number);
+		InputCorrectNumber(Id);
 	}
-	return elements[number - 1];
+	return elements[Id];
 }
 
 int main()
 {
-	vector <Pipe> pipes = {};
-	vector <CompressorStation> compressorStations = {};
+	unordered_map <int, Pipe> pipes = {};
+	unordered_map <int, CompressorStation> compressorStations = {};
 
 	int commandNumber;
 	while (true)
@@ -52,15 +53,17 @@ int main()
 		case 1:
 		{
 			cout << "[ Add pipe ]" << endl;
-			Pipe newPipe;
-			pipes.push_back(newPipe.AddPipe());
+			Pipe pipe;
+			cin >> pipe;
+			pipes.insert(make_pair(pipe.GetId(), pipe));
 			break;
 		}
 		case 2:
 		{
 			cout << "[ Add compressor station ]" << endl;
-			CompressorStation newCS;
-			compressorStations.push_back(newCS.AddCompressorStation());
+			CompressorStation CS;
+			cin >> CS;
+			compressorStations.insert(make_pair(CS.GetId(), CS));
 			break;
 		}
 		case 3:
@@ -68,26 +71,26 @@ int main()
 
 			if (pipes.size() == 0)
 				cout << "Pipe not found." << endl;
-			for (const auto& pipe : pipes)
-				pipe.ShowPipe(pipe);
+			for (const auto& pair : pipes)
+				cout << pair.second;
 
 			if (compressorStations.size() == 0)
 				cout << "Compressor station not found." << endl;
-			for (const auto& compressorStation : compressorStations)
-				compressorStation.ShowCompressorStation(compressorStation);
+			for (const auto& pair : compressorStations)
+				cout << pair.second;
 			break;
 		case 4:
 		{
 			cout << "[ Edit pipe ]" << endl;
 			Pipe pipe = SelectElement(pipes);
-			pipe.EditPipe(pipe);
+			EditPipe(pipe);
 			break;
 		}
 		case 5:
 		{
 			cout << "[ Edit compressor station ]" << endl;
 			CompressorStation compressorStation = SelectElement(compressorStations);
-			compressorStation.EditCompressorStation(compressorStation);
+			EditCompressorStation(compressorStation);
 			break;
 		}
 		case 6:
@@ -106,11 +109,11 @@ int main()
 			else
 			{
 				fout << pipes.size() << endl;
-				for (const auto& pipe : pipes)
-					pipe.SavePipe(pipe, fout);
+				for (const auto& pair : pipes)
+					fout << pair.second;
 				fout << compressorStations.size() << endl;
-				for (const auto& compressorStation : compressorStations)
-					compressorStation.SaveCompressorStation(compressorStation, fout);
+				for (const auto& pair : compressorStations)
+					fout << pair.second;
 			}
 			fout.close();
 		}
@@ -135,17 +138,23 @@ int main()
 				fin >> pipeSize;
 				if (pipeSize == 0)
 					cout << "Pipes not found." << endl;
-				pipes.resize(pipeSize);
-				for (auto& pipe : pipes)
-					pipe.LoadPipe(pipe, fin);
+				while (pipeSize-- > 0)
+				{
+					Pipe pipe;
+					fin >> pipe;
+					pipes.insert(make_pair(pipe.GetId(), pipe));
+				}
 
 				int compressorStationSize;
 				fin >> compressorStationSize;
 				if (compressorStationSize == 0)
 					cout << "Compressor stations not found." << endl;
-				compressorStations.resize(compressorStationSize);
-				for (auto& compressorStation : compressorStations)
-					compressorStation.LoadCompressorStation(compressorStation, fin);
+				while (compressorStationSize-- > 0)
+				{
+					CompressorStation CS;
+					fin >> CS;
+					compressorStations.insert(make_pair(CS.GetId(), CS));
+				}
 
 				fin.close();
 			}

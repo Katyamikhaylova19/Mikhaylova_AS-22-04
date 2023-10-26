@@ -8,17 +8,19 @@ using namespace std;
 
 class Pipe
 {
-public:
+	static int maxId;
+	int Id;
 	string kilometerMark = "";
 	double length = 0;
 	int diameter = 0;
 	bool isRepairing;
-
+public:
+	int GetId();
 	void PrintPipeStatus();
-	Pipe AddPipe();
-	void ShowPipe(const Pipe& newPipe) const;
-	void EditPipe(Pipe& editPipe);
-	void SavePipe(const Pipe& savePipe, ofstream& fout) const;
-	void LoadPipe(Pipe& loadPipe, ifstream& fin);
-};
+	friend void EditPipe(Pipe& editPipe);
+	friend ostream& operator << (ostream& out, const Pipe& pipe);
+	friend istream& operator >> (istream& in, Pipe& pipe);
+	friend ofstream& operator << (ofstream& fout, const Pipe& pipe);
+	friend ifstream& operator >> (ifstream& fin, Pipe& pipe);
+}; 
 

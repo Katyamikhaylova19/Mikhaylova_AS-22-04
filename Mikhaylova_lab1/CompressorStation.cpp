@@ -1,40 +1,13 @@
 #include "CompressorStation.h"
 
-CompressorStation CompressorStation::AddCompressorStation()
+int CompressorStation::maxId = 0;
+
+int CompressorStation::GetId()
 {
-	CompressorStation newCompressorStation;
-	cout << "Enter the name of the Compressor station: ";
-	cin.ignore();
-	getline(cin, newCompressorStation.name);
-	cout << "Enter the number of workshops: ";
-	InputCorrectNumber(newCompressorStation.workshopCount);
-	cout << "Enter the number of active workshops: ";
-	InputCorrectNumber(newCompressorStation.activeWorkshopCount, true);
-	while (newCompressorStation.workshopCount < newCompressorStation.activeWorkshopCount)
-	{
-		cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
-			<< "Please enter correct data: ";
-		InputCorrectNumber(newCompressorStation.activeWorkshopCount, true);
-	}
-	cout << "Enter efficiency from A to G: ";
-	cin >> newCompressorStation.efficiency;
-	while (!(newCompressorStation.efficiency >= "A" && newCompressorStation.efficiency <= "G" && newCompressorStation.efficiency.length() == 1))
-	{
-		cout << "Error! Please enter correct data: ";
-		cin >> newCompressorStation.efficiency;
-	}
-	return newCompressorStation;
+	return Id;
 }
 
-void CompressorStation::ShowCompressorStation(const CompressorStation& newCompressorStation) const
-{
-	cout << endl << "Name of the compressor station: " << newCompressorStation.name << endl;
-	cout << "Number of workshops: " << newCompressorStation.workshopCount << endl;
-	cout << "Number of active workshops: " << newCompressorStation.activeWorkshopCount << endl;
-	cout << "Efficiency: " << newCompressorStation.efficiency << endl << endl;
-}
-
-void CompressorStation::EditCompressorStation(CompressorStation& editCompressorStation)
+void EditCompressorStation(CompressorStation& editCompressorStation)
 {
 	int commandNumber;
 	if (editCompressorStation.workshopCount == 0)
@@ -71,21 +44,64 @@ void CompressorStation::EditCompressorStation(CompressorStation& editCompressorS
 	}
 }
 
-void CompressorStation::SaveCompressorStation(const CompressorStation& saveCompressorStation, ofstream& fout) const
+ostream& operator<<(ostream& out, const CompressorStation& CS)
 {
-	fout << saveCompressorStation.name << endl;
-	fout << saveCompressorStation.workshopCount << endl;
-	fout << saveCompressorStation.activeWorkshopCount << endl;
-	fout << saveCompressorStation.efficiency << endl;
-	cout << "Compressor station data successfully saved to file!" << endl;
+	out << endl << "Compressor station Id: " << CS.Id << endl;
+	out << "Name of the compressor station: " << CS.name << endl;
+	out << "Number of workshops: " << CS.workshopCount << endl;
+	out << "Number of active workshops: " << CS.activeWorkshopCount << endl;
+	out << "Efficiency: " << CS.efficiency << endl << endl;
+	return out;
 }
 
-void CompressorStation::LoadCompressorStation(CompressorStation& loadCompressorStation, ifstream& fin)
+istream& operator>>(istream& in, CompressorStation& CS)
 {
+	CS.Id = ++CS.maxId;
+	cout << "Id: " << CS.Id << endl;
+	cout << "Enter the name of the Compressor station: ";
+	in.ignore();
+	getline(in, CS.name);
+	cout << "Enter the number of workshops: ";
+	InputCorrectNumber(CS.workshopCount);
+	cout << "Enter the number of active workshops: ";
+	InputCorrectNumber(CS.activeWorkshopCount, true);
+	while (CS.workshopCount < CS.activeWorkshopCount)
+	{
+		cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
+			<< "Please enter correct data: ";
+		InputCorrectNumber(CS.activeWorkshopCount, true);
+	}
+	cout << "Enter efficiency from A to G: ";
+	cin >> CS.efficiency;
+	while (!(CS.efficiency >= "A" && CS.efficiency <= "G" && CS.efficiency.length() == 1))
+	{
+		cout << "Error! Please enter correct data: ";
+		cin >> CS.efficiency;
+	}
+	return in;
+}
+
+ofstream& operator<<(ofstream& fout, const CompressorStation& CS)
+{
+	fout << CS.Id << endl;
+	fout << CS.name << endl;
+	fout << CS.workshopCount << endl;
+	fout << CS.activeWorkshopCount << endl;
+	fout << CS.efficiency << endl;
+	cout << "Compressor station data successfully saved to file!" << endl;
+	return fout;
+}
+
+
+ifstream& operator>>(ifstream& fin, CompressorStation& CS)
+{
+	fin >> CS.Id;
+	CS.maxId = CS.Id;
 	fin.ignore();
-	getline(fin, loadCompressorStation.name);
-	fin >> loadCompressorStation.workshopCount;
-	fin >> loadCompressorStation.activeWorkshopCount;
-	fin >> loadCompressorStation.efficiency;
+	getline(fin, CS.name);
+	fin >> CS.workshopCount;
+	fin >> CS.activeWorkshopCount;
+	fin >> CS.efficiency;
 	cout << "Compressor station data loaded successfully!" << endl;
+	return fin;
 }
