@@ -12,33 +12,70 @@ void Pipe::PrintPipeStatus()
 	cout << (isRepairing ? "Pipe is under repair" : "Pipe is in work") << endl;
 }
 
-void EditPipe(Pipe& editPipe)
+string Pipe::GetName() const
 {
+	return kilometerMark;
+}
+
+bool Pipe::GetStatus()
+{
+	return isRepairing;
+}
+
+void EditPipes(vector <Pipe*>& pipes)
+{
+	cout << endl << "Do you want to change repairing status?" << endl
+		<< "1. Yes" << endl
+		<< "2. No" << endl
+		<< "Your choice: ";
 	int commandNumber;
-	if (editPipe.length == 0)
+	InputCorrectNumber(commandNumber);
+	switch (commandNumber)
 	{
-		cout << "Pipe not found." << endl;
-	}
-	else
-	{
-		editPipe.PrintPipeStatus();
-		cout << endl << "What to change this?" << endl
-			<< "1. Yes" << endl
-			<< "2. No" << endl
-			<< "Your choice: ";
-		InputCorrectNumber(commandNumber);
-		switch (commandNumber)
+	case 1:
+		bool isRepairing;
+		cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
+		InputCorrectNumber(isRepairing, true);
+
+		for (auto& pipe : pipes)
 		{
-		case 1:
-			editPipe.isRepairing = !editPipe.isRepairing;
-			editPipe.PrintPipeStatus();
-			break;
-		case 2:
-			return;
-		default:
-			cout << "Error! Please enter correct data " << endl;
-			break;
+			pipe->isRepairing = isRepairing;
+			cout << "ID: " << pipe->Id << " - ";
+			pipe->PrintPipeStatus();
 		}
+		break;
+	case 2:
+		return;
+	default:
+		cout << "Error! Please enter correct data " << endl;
+		break;
+	}
+}
+
+void EditPipe(Pipe& pipe)
+{
+	cout << endl << "Do you want to change repairing status?" << endl
+		<< "1. Yes" << endl
+		<< "2. No" << endl
+		<< "Your choice: ";
+	int commandNumber;
+	InputCorrectNumber(commandNumber);
+	switch (commandNumber)
+	{
+	case 1:
+		bool isRepairing;
+		cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
+		InputCorrectNumber(isRepairing, true);
+
+		pipe.isRepairing = isRepairing;
+		cout << "ID: " << pipe.Id << " - ";
+		pipe.PrintPipeStatus();
+		break;
+	case 2:
+		return;
+	default:
+		cout << "Error! Please enter correct data " << endl;
+		break;
 	}
 }
 

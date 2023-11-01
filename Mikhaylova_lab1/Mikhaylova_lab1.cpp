@@ -1,7 +1,5 @@
 ﻿#include <iostream>
-#include <string>
 #include <fstream>
-#include <vector>
 #include <unordered_map>
 #include "Utilities.h"
 #include "Pipe.h"
@@ -25,6 +23,129 @@ T& SelectElement(unordered_map <int, T>& elements)
 	return elements[Id];
 }
 
+void SearchPipes(unordered_map <int, Pipe>& pipes) {
+	while (true)
+	{
+		int commandNumber;
+		cout << "By what criteria do you want to find a pipe?" << endl
+			<< "1. Name" << endl
+			<< "2. Is repairing or not" << endl
+			<< "3. Back" << endl
+			<< "Your choice: ";
+		InputCorrectNumber(commandNumber);
+		switch (commandNumber)
+		{
+		case 1:
+		{
+			string name;
+			cout << "Name: ";
+			cin.ignore();
+			getline(cin, name);
+			vector<Pipe*> editPipes;
+			for (auto& pair : pipes) {
+				if (pair.second.GetName().find(name) != string::npos)
+				{
+					cout << pair.second << endl;
+					editPipes.push_back(&(pair.second));
+				}
+			}
+			if (editPipes.empty())
+				cout << "Pipe with this name not found." << endl;
+			else
+				EditPipes(editPipes);
+		}
+		break;
+		case 2:
+		{
+			bool isRepairing;
+			cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
+			InputCorrectNumber(isRepairing, true);
+
+			vector<Pipe*> editPipes;
+			for (auto& pair : pipes) {
+				if (pair.second.GetStatus() == isRepairing)
+				{
+					cout << pair.second << endl;
+					editPipes.push_back(&(pair.second));
+				}
+			}
+			if (editPipes.empty())
+				cout << "Pipe with this name not found." << endl;
+			else
+				EditPipes(editPipes);
+		}
+		break;
+		case 3:
+			return;
+		default:
+			cout << "Error! Please enter correct data" << endl;
+			break;
+		}
+	}
+}
+
+void SearchCompressorStations(unordered_map <int, CompressorStation>& compressorStations) {
+	while (true)
+	{
+		int commandNumber;
+		cout << "By what criteria do you want to find a Compressor Station?" << endl
+			<< "1. Name" << endl
+			<< "2. Percent of active worskshops" << endl
+			<< "3. Back" << endl
+			<< "Your choice: ";
+		InputCorrectNumber(commandNumber);
+		switch (commandNumber)
+		{
+		case 1:
+		{
+			string name;
+			cout << "Name: ";
+			cin.ignore();
+			getline(cin, name);
+			vector<CompressorStation*> editCompressorStations;
+			for (auto& pair : compressorStations) {
+				if (pair.second.GetName().find(name) != string::npos)
+				{
+					cout << pair.second << endl;
+					editCompressorStations.push_back(&(pair.second));
+				}
+			}
+			if (editCompressorStations.empty())
+				cout << "Compressor Station with this name not found." << endl;
+			else
+				EditCompressorStations(editCompressorStations);
+		}
+		break;
+		case 2:
+		{
+			int percent;
+			cout << "Enter the percent of active workshops (0-100) +-5%: ";
+			InputCorrectNumber(percent, true);
+
+			vector<CompressorStation*> editCompressorStations;
+			for (auto& pair : compressorStations) {
+				if (pair.second.GetPercentOfActiveWorkshops() > percent - 5 && pair.second.GetPercentOfActiveWorkshops() < percent + 5)
+				{
+					cout << pair.second << endl;
+					editCompressorStations.push_back(&(pair.second));
+				}
+			}
+			if (editCompressorStations.empty())
+				cout << "Compressor Station with this name not found." << endl;
+			else
+				EditCompressorStations(editCompressorStations);
+		}
+		break;
+		case 3:
+			return;
+		default:
+			cout << "Error! Please enter correct data" << endl;
+			break;
+		}
+	}
+}
+
+
 int main()
 {
 	unordered_map <int, Pipe> pipes = {};
@@ -41,7 +162,8 @@ int main()
 			<< "4. Edit pipe" << endl
 			<< "5. Edit compressor station" << endl
 			<< "6. Save" << endl
-			<< "7. Load" << endl << endl
+			<< "7. Load" << endl 
+			<< "8. Search" << endl << endl
 			<< "What do you want to do: ";
 		InputCorrectNumber(commandNumber, true);
 		switch (commandNumber)
@@ -160,6 +282,38 @@ int main()
 			}
 		}
 		break;
+		case 8:
+		{
+			bool isRunning = true;
+			while (isRunning) {
+				int commandNumber1;
+				cout << "[ Search ]" << endl
+					<< "What do you want to find?" << endl
+					<< "1. Pipe" << endl
+					<< "2. Compressor station" << endl
+					<< "3. Back" << endl
+					<< "Your choice: ";
+				InputCorrectNumber(commandNumber1);
+				switch (commandNumber1)
+				{
+				case 1:
+					cout << "[ Pipe ]" << endl;
+					SearchPipes(pipes);
+					break;
+				case 2:
+					cout << "[ Compressor station ]" << endl;
+					SearchCompressorStations(compressorStations);
+					break;
+				case 3:
+					isRunning = false;
+					break;
+				default:
+					cout << "Error! Please enter correct data" << endl;
+					break;
+				}
+			}
+			break;
+		}
 		default:
 			cout << "Error! Please enter correct data: " << endl;
 			break;

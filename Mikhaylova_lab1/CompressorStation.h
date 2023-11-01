@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <vector>
 #include "Utilities.h"
 
 using namespace std;
@@ -16,7 +17,11 @@ class CompressorStation
 	string efficiency = "A";
 public:
 	int GetId();
-	friend void EditCompressorStation(CompressorStation& editCompressorStation);
+	string GetName() const;
+	void PrintWorkshopStatus() const;
+	int GetPercentOfActiveWorkshops() const;
+	friend void EditCompressorStations(vector <CompressorStation*>& compressorStations);
+	friend void EditCompressorStation(CompressorStation& compressorStation);
 	friend ostream& operator << (ostream& out, const CompressorStation& CS);
 	friend istream& operator >> (istream& in, CompressorStation& CS);
 	friend ofstream& operator << (ofstream& fout, const CompressorStation& CS);

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <vector>
 #include "Utilities.h"
 
 using namespace std;
@@ -16,8 +17,11 @@ class Pipe
 	bool isRepairing;
 public:
 	int GetId();
+	string GetName() const;
+	bool GetStatus();
 	void PrintPipeStatus();
-	friend void EditPipe(Pipe& editPipe);
+	friend void EditPipes(vector <Pipe*>& pipes);
+	friend void EditPipe(Pipe& pipe);
 	friend ostream& operator << (ostream& out, const Pipe& pipe);
 	friend istream& operator >> (istream& in, Pipe& pipe);
 	friend ofstream& operator << (ofstream& fout, const Pipe& pipe);
