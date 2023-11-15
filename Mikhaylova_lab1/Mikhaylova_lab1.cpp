@@ -4,6 +4,7 @@
 #include "Utilities.h"
 #include "Pipe.h"
 #include "CompressorStation.h"
+#include "logger.h"
 
 using namespace std;
 
@@ -150,6 +151,8 @@ int main()
 {
 	unordered_map <int, Pipe> pipes = {};
 	unordered_map <int, CompressorStation> compressorStations = {};
+	Logger logger;
+	logger.log("Start");
 
 	int commandNumber;
 	while (true)
@@ -170,26 +173,32 @@ int main()
 		{
 		case 0:
 			cout << "[ Exit the program ]" << endl;
+			logger.log("Exit");
 			return 0;
 			break;
 		case 1:
 		{
 			cout << "[ Add pipe ]" << endl;
+			logger.log("Add pipe start");
 			Pipe pipe;
 			cin >> pipe;
 			pipes.insert(make_pair(pipe.GetId(), pipe));
+			logger.log("Add pipe finish");
 			break;
 		}
 		case 2:
 		{
 			cout << "[ Add compressor station ]" << endl;
+			logger.log("Add compressor station start");
 			CompressorStation CS;
 			cin >> CS;
 			compressorStations.insert(make_pair(CS.GetId(), CS));
+			logger.log("Add compressor station finish");
 			break;
 		}
 		case 3:
 			cout << "[ View all objects ]" << endl;
+			logger.log("Show all objects start");
 
 			if (pipes.size() == 0)
 				cout << "Pipe not found." << endl;
@@ -200,24 +209,30 @@ int main()
 				cout << "Compressor station not found." << endl;
 			for (const auto& pair : compressorStations)
 				cout << pair.second;
+			logger.log("Show all objects finish");
 			break;
 		case 4:
 		{
 			cout << "[ Edit pipe ]" << endl;
+			logger.log("Edit pipe start");
 			Pipe pipe = SelectElement(pipes);
 			EditPipe(pipe);
+			logger.log("Edit pipe finish");
 			break;
 		}
 		case 5:
 		{
 			cout << "[ Edit compressor station ]" << endl;
+			logger.log("Edit compressor station start");
 			CompressorStation compressorStation = SelectElement(compressorStations);
 			EditCompressorStation(compressorStation);
+			logger.log("Edit compressor station finish");
 			break;
 		}
 		case 6:
 		{
 			cout << "[ Save ]" << endl;
+			logger.log("Save start");
 			ofstream fout;
 			string fileName;
 			cout << "Enter file name: ";
@@ -238,11 +253,13 @@ int main()
 					fout << pair.second;
 			}
 			fout.close();
+			logger.log("Save finish");
 		}
 		break;
 		case 7:
 		{
 			cout << "[ Load ]" << endl;
+			logger.log("Load start");
 			ifstream fin;
 			string fileName;
 			int input;
@@ -280,6 +297,7 @@ int main()
 
 				fin.close();
 			}
+			logger.log("Load finish");
 		}
 		break;
 		case 8:
@@ -293,6 +311,7 @@ int main()
 					<< "2. Compressor station" << endl
 					<< "3. Back" << endl
 					<< "Your choice: ";
+				logger.log("Search start");
 				InputCorrectNumber(commandNumber1);
 				switch (commandNumber1)
 				{
@@ -311,6 +330,7 @@ int main()
 					cout << "Error! Please enter correct data" << endl;
 					break;
 				}
+				logger.log("Search finish");
 			}
 			break;
 		}
@@ -319,4 +339,5 @@ int main()
 			break;
 		}
 	}
+	logger.log("Finish");
 }

@@ -54,7 +54,7 @@ void EditPipes(vector <Pipe*>& pipes)
 
 void EditPipe(Pipe& pipe)
 {
-	cout << endl << "Do you want to change repairing status?" << endl
+	cout << "Do you want to change repairing status?" << endl
 		<< "1. Yes" << endl
 		<< "2. No" << endl
 		<< "Your choice: ";
@@ -86,9 +86,9 @@ ostream& operator<<(ostream& out, const Pipe& pipe)
 	out << "Pipe length: " << pipe.length << " km" << endl;
 	out << "Pipe diameter: " << pipe.diameter << " mm" << endl;
 	if (pipe.isRepairing)
-		out << "Pipe under repair." << endl << endl;
+		out << "Pipe under repair." << endl;
 	else
-		out << "Pipe is in work." << endl << endl;
+		out << "Pipe is in work." << endl;
 	return out;
 }
 
