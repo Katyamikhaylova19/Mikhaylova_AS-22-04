@@ -29,14 +29,48 @@ void SearchPipes(unordered_map <int, Pipe>& pipes) {
 	{
 		int commandNumber;
 		cout << "By what criteria do you want to find a pipe?" << endl
-			<< "1. Name" << endl
-			<< "2. Is repairing or not" << endl
-			<< "3. Back" << endl
+			<< "1. Id" << endl
+			<< "2. Name" << endl
+			<< "3. Is repairing or not" << endl
+			<< "4. Back" << endl
 			<< "Your choice: ";
 		InputCorrectNumber(commandNumber);
 		switch (commandNumber)
 		{
 		case 1:
+		{
+			int id;
+			cout << "Select ID pipe: ";
+			InputCorrectNumber(id);
+			while (pipes.find(id) == pipes.end())
+			{
+				cout << "Error!\nThe number exceeds the number of elements." << endl
+					<< "Number of elements: " << pipes.size() << endl
+					<< "Please enter correct data: ";
+				InputCorrectNumber(id);
+			}
+			int commandNumber1;
+			cout << "Do you want to remove the pipe?" << endl
+				<< "1. Yes" << endl
+				<< "2. No" << endl
+				<< "Your choice: ";
+			InputCorrectNumber(commandNumber1);
+			switch (commandNumber1)
+			{
+			case 1:
+			{
+				pipes.erase(id);
+				cout << "You removed the pipe from the ID: " << id << endl << endl;
+			}
+			case 2:
+				return;
+			default:
+				cout << "Error! Please enter correct data" << endl;
+				break;
+			}
+		}
+		break;
+		case 2:
 		{
 			string name;
 			cout << "Name: ";
@@ -56,7 +90,7 @@ void SearchPipes(unordered_map <int, Pipe>& pipes) {
 				EditPipes(editPipes);
 		}
 		break;
-		case 2:
+		case 3:
 		{
 			bool isRepairing;
 			cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
@@ -76,7 +110,7 @@ void SearchPipes(unordered_map <int, Pipe>& pipes) {
 				EditPipes(editPipes);
 		}
 		break;
-		case 3:
+		case 4:
 			return;
 		default:
 			cout << "Error! Please enter correct data" << endl;
@@ -90,14 +124,48 @@ void SearchCompressorStations(unordered_map <int, CompressorStation>& compressor
 	{
 		int commandNumber;
 		cout << "By what criteria do you want to find a Compressor Station?" << endl
-			<< "1. Name" << endl
-			<< "2. Percent of active worskshops" << endl
-			<< "3. Back" << endl
+			<< "1. Id" << endl
+			<< "2. Name" << endl
+			<< "3. Percent of active worskshops" << endl
+			<< "4. Back" << endl
 			<< "Your choice: ";
 		InputCorrectNumber(commandNumber);
 		switch (commandNumber)
 		{
 		case 1:
+		{
+			int id;
+			cout << "Select ID Compressor station: ";
+			InputCorrectNumber(id);
+			while (compressorStations.find(id) == compressorStations.end())
+			{
+				cout << "Error!\nThe number exceeds the number of elements." << endl
+					<< "Number of elements: " << compressorStations.size() << endl
+					<< "Please enter correct data: ";
+				InputCorrectNumber(id);
+			}
+			int commandNumber1;
+			cout << "Do you want to remove the pipe?" << endl
+				<< "1. Yes" << endl
+				<< "2. No" << endl
+				<< "Your choice: ";
+			InputCorrectNumber(commandNumber1);
+			switch (commandNumber1)
+			{
+			case 1:
+			{
+				compressorStations.erase(id);
+				cout << "You removed the compressor station from the ID: " << id << endl << endl;
+			}
+			case 2:
+				return;
+			default:
+				cout << "Error! Please enter correct data" << endl;
+				break;
+			}
+		}
+		break;
+		case 2:
 		{
 			string name;
 			cout << "Name: ";
@@ -117,7 +185,7 @@ void SearchCompressorStations(unordered_map <int, CompressorStation>& compressor
 				EditCompressorStations(editCompressorStations);
 		}
 		break;
-		case 2:
+		case 3:
 		{
 			int percent;
 			cout << "Enter the percent of active workshops (0-100) +-5%: ";
@@ -137,7 +205,7 @@ void SearchCompressorStations(unordered_map <int, CompressorStation>& compressor
 				EditCompressorStations(editCompressorStations);
 		}
 		break;
-		case 3:
+		case 4:
 			return;
 		default:
 			cout << "Error! Please enter correct data" << endl;
@@ -215,8 +283,12 @@ int main()
 		{
 			cout << "[ Edit pipe ]" << endl;
 			logger.log("Edit pipe start");
-			Pipe pipe = SelectElement(pipes);
-			EditPipe(pipe);
+			if (pipes.size() == 0)
+				cout << "Pipe not found." << endl;
+			else {
+				Pipe pipe = SelectElement(pipes);
+				EditPipe(pipe);
+			}
 			logger.log("Edit pipe finish");
 			break;
 		}
@@ -224,8 +296,12 @@ int main()
 		{
 			cout << "[ Edit compressor station ]" << endl;
 			logger.log("Edit compressor station start");
-			CompressorStation compressorStation = SelectElement(compressorStations);
-			EditCompressorStation(compressorStation);
+			if (compressorStations.size() == 0)
+				cout << "Compressor station not found." << endl;
+			else {
+				CompressorStation compressorStation = SelectElement(compressorStations);
+				EditCompressorStation(compressorStation);
+			}
 			logger.log("Edit compressor station finish");
 			break;
 		}
@@ -306,7 +382,7 @@ int main()
 			while (isRunning) {
 				int commandNumber1;
 				cout << "[ Search ]" << endl
-					<< "What do you want to find?" << endl
+					<< "What do you want to find?" << endl					
 					<< "1. Pipe" << endl
 					<< "2. Compressor station" << endl
 					<< "3. Back" << endl
@@ -316,12 +392,20 @@ int main()
 				switch (commandNumber1)
 				{
 				case 1:
-					cout << "[ Pipe ]" << endl;
-					SearchPipes(pipes);
+					if (pipes.size() == 0)
+						cout << "Pipes not found." << endl;
+					else {
+						cout << "[ Pipe ]" << endl;
+						SearchPipes(pipes);
+					}
 					break;
 				case 2:
-					cout << "[ Compressor station ]" << endl;
-					SearchCompressorStations(compressorStations);
+					if (compressorStations.size() == 0)
+						cout << "Compressor stations not found." << endl;
+					else {
+						cout << "[ Compressor station ]" << endl;
+						SearchCompressorStations(compressorStations);
+					}
 					break;
 				case 3:
 					isRunning = false;
@@ -339,5 +423,4 @@ int main()
 			break;
 		}
 	}
-	logger.log("Finish");
 }

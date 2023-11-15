@@ -1,4 +1,22 @@
 [0] Start
-[1] Show all objects start
-[2] Show all objects finish
-[3] Exit
+[1] Search start
+[2] Search finish
+[3] Search start
+[4] Search finish
+[5] Search start
+[6] Search finish
+[7] Add compressor station start
+[8] Add compressor station finish
+[9] Search start
+[10] Search finish
+[11] Search start
+[12] Search finish
+[13] Search start
+[14] Search finish
+[15] Add compressor station start
+[16] Add compressor station finish
+[17] Search start
+[18] Search finish
+[19] Search start
+[20] Search finish
+[21] Search start
