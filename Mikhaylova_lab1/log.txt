@@ -1,22 +1,13 @@
 [0] Start
-[1] Search start
-[2] Search finish
-[3] Search start
-[4] Search finish
-[5] Search start
-[6] Search finish
-[7] Add compressor station start
-[8] Add compressor station finish
-[9] Search start
-[10] Search finish
-[11] Search start
-[12] Search finish
-[13] Search start
-[14] Search finish
-[15] Add compressor station start
-[16] Add compressor station finish
-[17] Search start
-[18] Search finish
-[19] Search start
-[20] Search finish
-[21] Search start
+[1] Load start
+[2] Load finish
+[3] Connect the pipe and compressor stations start
+[4] Connect the pipe and compressor stations finish
+[5] View gas Network start
+[6] View gas Network finish
+[7] Connect the pipe and compressor stations start
+[8] Connect the pipe and compressor stations finish
+[9] Connect the pipe and compressor stations start
+[10] Connect the pipe and compressor stations finish
+[11] View gas Network start
+[12] View gas Network finish

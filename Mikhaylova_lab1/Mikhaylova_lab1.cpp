@@ -214,6 +214,78 @@ void SearchCompressorStations(unordered_map <int, CompressorStation>& compressor
 	}
 }
 
+void ConnectPipe(unordered_map <int, Pipe>& pipes, unordered_map <int, CompressorStation>& compressorStations)
+{
+	cout << endl << "[ Connect the pipe and compressor stations ]" << endl;
+	int diameterPipe;
+	cout << "Enter pipe diameter: ";
+	InputCorrectNumber(diameterPipe);
+
+	int connectedPipeId = 0;
+	for (auto& pair : pipes) {
+		if (pair.second.GetDiameter() == diameterPipe && pair.second.FreeConnections())
+		{
+			connectedPipeId = pair.first;
+			break;
+		}
+	}
+
+	Pipe* connectedPipe{};
+	if (connectedPipeId == 0) // если не найдено свободных труб с нужным диаметром
+	{
+		bool isRunning = true;
+		while (isRunning) {
+			int commandNumber1;
+			cout << "Pipe with this diameter not found" << endl
+				<< "Do you want to add a pipe?" << endl
+				<< "1. Yes" << endl
+				<< "2. No" << endl
+				<< "Your choice: ";
+			InputCorrectNumber(commandNumber1);
+			switch (commandNumber1)
+			{
+			case 1:
+			{
+				cin >> *connectedPipe;
+				pipes.insert(make_pair(connectedPipe->GetId(), *connectedPipe));
+				isRunning = false;
+			}
+			break;
+			case 2:
+				return;
+			default:
+				cout << "Error! Please enter correct data" << endl;
+				break;
+			}
+		}
+	}
+	else
+	{
+		connectedPipe = &pipes[connectedPipeId];
+	}
+
+	// запрашиваем две кс
+	// соединяем трубу с двумя кс
+	cout << "Enter the id of the first compressor station: ";
+	int csId1;
+	InputCorrectNumber(csId1);
+	while (compressorStations.find(csId1) == compressorStations.end())
+	{
+		cout << "Error!\nCompressor Station with this Id not found." << endl
+			<< "Please enter correct data: ";
+		InputCorrectNumber(csId1);
+	}
+	cout << "Enter the id of the second compressor station: ";
+	int csId2;
+	InputCorrectNumber(csId2);
+	while (compressorStations.find(csId2) == compressorStations.end() || csId2 == csId1)
+	{
+		cout << "Error!\nCompressor Station with this Id not found." << endl
+			<< "Please enter correct data: ";
+		InputCorrectNumber(csId2);
+	}
+	connectedPipe->Connect(csId1, csId2);
+}
 
 int main()
 {
@@ -233,8 +305,10 @@ int main()
 			<< "4. Edit pipe" << endl
 			<< "5. Edit compressor station" << endl
 			<< "6. Save" << endl
-			<< "7. Load" << endl 
-			<< "8. Search" << endl << endl
+			<< "7. Load" << endl
+			<< "8. Search" << endl
+			<< "9. Connect the pipe and compressor stations" << endl
+			<< "10. View gas network" << endl << endl
 			<< "What do you want to do: ";
 		InputCorrectNumber(commandNumber, true);
 		switch (commandNumber)
@@ -303,8 +377,8 @@ int main()
 				EditCompressorStation(compressorStation);
 			}
 			logger.log("Edit compressor station finish");
-			break;
 		}
+		break;
 		case 6:
 		{
 			cout << "[ Save ]" << endl;
@@ -418,6 +492,32 @@ int main()
 			}
 			break;
 		}
+		case 9:
+		{
+			logger.log("Connect the pipe and compressor stations start");
+			if (compressorStations.size() < 2)
+				cout << "Compressor stations less than two." << endl;
+			else 
+				ConnectPipe(pipes, compressorStations);
+			logger.log("Connect the pipe and compressor stations finish");
+		}
+		break;
+		case 10:
+		{
+			cout << "[ View gas Network ]" << endl;
+			logger.log("View gas Network start");
+
+			if (pipes.size() == 0)
+				cout << "Pipe not found." << endl;
+			if (compressorStations.size() == 0)
+				cout << "Compressor station not found." << endl;
+
+			for (const auto& pair : pipes)
+				if (!pair.second.FreeConnections())
+					cout << "Pipe " << pair.first << " - CS1 " << pair.second.csId1 << " - CS2 " << pair.second.csId2 << endl;
+			logger.log("View gas Network finish");
+		}
+		break;
 		default:
 			cout << "Error! Please enter correct data: " << endl;
 			break;

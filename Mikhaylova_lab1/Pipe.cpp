@@ -17,9 +17,25 @@ string Pipe::GetName() const
 	return kilometerMark;
 }
 
-bool Pipe::GetStatus()
+int Pipe::GetDiameter() const
+{
+	return diameter;
+}
+
+bool Pipe::GetStatus() const
 {
 	return isRepairing;
+}
+
+bool Pipe::FreeConnections() const
+{
+	return csId1 < 1 || csId2 < 1;
+}
+
+void Pipe::Connect(const int& id1, const int& id2)
+{
+	csId1 = id1;
+	csId2 = id2;
 }
 
 void EditPipes(vector <Pipe*>& pipes)
