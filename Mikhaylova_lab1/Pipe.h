@@ -25,6 +25,7 @@ public:
 	bool FreeConnections() const;
 	void PrintPipeStatus();
 	void Connect(const int& id1, const int& id2);
+	void DeleteConnection();
 	friend void EditPipes(vector <Pipe*>& pipes);
 	friend void EditPipe(Pipe& pipe);
 	friend ostream& operator << (ostream& out, const Pipe& pipe);

@@ -1,27 +1,74 @@
-2
+6
 1
 4000
-Saratov 500
+Kislovodsk
 500
 1
-2
-3500
-Moscow 2000
-700
-0
+6
 3
+2
+5000
+Saratov 5
+500
+0
+6
 1
-Kislovodsk
+3
+6000
+Moskow
+700
+1
+5
+1
+4
+7000
+Kislovodsk 1
+1000
+0
+5
+2
+5
+8000
+Saratov 4
+1000
+1
+3
+4
+6
+1400
+Moskow 2
+1400
+0
+4
+2
+6
+1
+Kislovodsk 1
 100
-70
-B
+50
+C
 2
 Kislovodsk 2
-70
-10
-G
+120
+120
+A
 3
-Kislovodsk 3
-90
-20
+Saratov 1
+50
+40
+B
+4
+Saratov 2
+70
+50
+C
+5
+Moskow 1
+60
+60
+A
+6
+Moskow 2
+150
+100
 C

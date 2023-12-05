@@ -38,6 +38,24 @@ void Pipe::Connect(const int& id1, const int& id2)
 	csId2 = id2;
 }
 
+void Pipe::DeleteConnection()
+{
+	csId1 = 0;
+	csId2 = 0;
+}
+
+void InputCorrectDiameter(int& diameter)
+{
+	cin >> diameter;
+	while ((diameter != 500 && diameter != 700 && diameter != 1000 && diameter != 1400) || cin.fail() || cin.peek() != '\n')
+	{
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Error! Please enter correct data: ";
+		cin >> diameter;
+	}
+}
+
 void EditPipes(vector <Pipe*>& pipes)
 {
 	cout << endl << "Do you want to change repairing status?" << endl
@@ -118,7 +136,7 @@ istream& operator>>(istream& in, Pipe& pipe)
 	cout << "Enter the pipe length (in kilometers): ";
 	InputCorrectNumber(pipe.length);
 	cout << "Enter the pipe diameter (in millimeters): ";
-	InputCorrectNumber(pipe.diameter);
+	InputCorrectDiameter(pipe.diameter);
 	cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
 	InputCorrectNumber(pipe.isRepairing, true);
 	return in;
@@ -131,6 +149,8 @@ ofstream& operator<<(ofstream& fout, const Pipe& pipe)
 	fout << pipe.kilometerMark << endl;
 	fout << pipe.diameter << endl;
 	fout << pipe.isRepairing << endl;
+	fout << pipe.csId1 << endl;
+	fout << pipe.csId2 << endl;
 	cout << "Pipe data successfully saved to file!" << endl;
 	return fout;
 }
@@ -144,6 +164,8 @@ ifstream& operator>>(ifstream& fin, Pipe& pipe)
 	getline(fin, pipe.kilometerMark);
 	fin >> pipe.diameter;
 	fin >> pipe.isRepairing;
+	fin >> pipe.csId1;
+	fin >> pipe.csId2;
 	cout << "Pipe data loaded successfully!" << endl;
 	return fin;
 }

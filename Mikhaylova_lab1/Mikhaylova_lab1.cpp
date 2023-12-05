@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <unordered_map>
+#include <queue>
 #include "Utilities.h"
 #include "Pipe.h"
 #include "CompressorStation.h"
@@ -214,6 +215,18 @@ void SearchCompressorStations(unordered_map <int, CompressorStation>& compressor
 	}
 }
 
+bool HasPipeWithConnection(const unordered_map<int, Pipe>& pipes, const int& csId1, const int& csId2) {
+	bool hasPipe = false;
+	for (auto& pair : pipes) {
+		if ((pair.second.csId1 == csId1 && pair.second.csId2 == csId2)
+			|| (pair.second.csId1 == csId2 && pair.second.csId2 == csId1))
+		{
+			hasPipe = true;
+		}
+	}
+	return hasPipe;
+}
+
 void ConnectPipe(unordered_map <int, Pipe>& pipes, unordered_map <int, CompressorStation>& compressorStations)
 {
 	cout << endl << "[ Connect the pipe and compressor stations ]" << endl;
@@ -236,7 +249,7 @@ void ConnectPipe(unordered_map <int, Pipe>& pipes, unordered_map <int, Compresso
 		bool isRunning = true;
 		while (isRunning) {
 			int commandNumber1;
-			cout << "Pipe with this diameter not found" << endl
+			cout << "Pipe with this diameter not found." << endl
 				<< "Do you want to add a pipe?" << endl
 				<< "1. Yes" << endl
 				<< "2. No" << endl
@@ -246,7 +259,9 @@ void ConnectPipe(unordered_map <int, Pipe>& pipes, unordered_map <int, Compresso
 			{
 			case 1:
 			{
-				cin >> *connectedPipe;
+				Pipe pipe;
+				cin >> pipe;
+				connectedPipe = &pipe;
 				pipes.insert(make_pair(connectedPipe->GetId(), *connectedPipe));
 				isRunning = false;
 			}
@@ -278,7 +293,9 @@ void ConnectPipe(unordered_map <int, Pipe>& pipes, unordered_map <int, Compresso
 	cout << "Enter the id of the second compressor station: ";
 	int csId2;
 	InputCorrectNumber(csId2);
-	while (compressorStations.find(csId2) == compressorStations.end() || csId2 == csId1)
+	while (compressorStations.find(csId2) == compressorStations.end()
+		|| csId2 == csId1
+		|| HasPipeWithConnection(pipes, csId1, csId2))
 	{
 		cout << "Error!\nCompressor Station with this Id not found." << endl
 			<< "Please enter correct data: ";
@@ -286,6 +303,44 @@ void ConnectPipe(unordered_map <int, Pipe>& pipes, unordered_map <int, Compresso
 	}
 	connectedPipe->Connect(csId1, csId2);
 }
+
+vector<int> topologicalSort(unordered_map<int, Pipe>& pipes, unordered_map<int, CompressorStation>& stations) {
+	vector<int> result;
+	unordered_map<int, int> inDegree; // Количество входящих ребер для каждой вершины
+
+	// Инициализация inDegree для каждой вершины
+	for (auto& pipe : pipes) {
+		inDegree[pipe.second.csId2]++;
+	}
+
+	// Создаем очередь для хранения вершин с нулевым inDegree
+	queue<int> q;
+	for (auto& station : stations) {
+		if (inDegree.find(station.first) == inDegree.end()) {
+			q.push(station.first);
+		}
+	}
+
+	// Выполняем топологическую сортировку
+	while (!q.empty()) {
+		int currentStation = q.front();
+		q.pop();
+		result.push_back(currentStation);
+
+		// Уменьшаем inDegree для всех соседних вершин
+		for (auto& pipe : pipes) {
+			if (pipe.second.csId1 == currentStation) {
+				inDegree[pipe.second.csId2]--;
+				if (inDegree[pipe.second.csId2] == 0) {
+					q.push(pipe.second.csId2);
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
 
 int main()
 {
@@ -308,7 +363,9 @@ int main()
 			<< "7. Load" << endl
 			<< "8. Search" << endl
 			<< "9. Connect the pipe and compressor stations" << endl
-			<< "10. View gas network" << endl << endl
+			<< "10. View gas network" << endl 
+			<< "11. Delete gas network" << endl 
+			<< "12. Topological sort" << endl
 			<< "What do you want to do: ";
 		InputCorrectNumber(commandNumber, true);
 		switch (commandNumber)
@@ -506,16 +563,59 @@ int main()
 		{
 			cout << "[ View gas Network ]" << endl;
 			logger.log("View gas Network start");
-
 			if (pipes.size() == 0)
 				cout << "Pipe not found." << endl;
 			if (compressorStations.size() == 0)
 				cout << "Compressor station not found." << endl;
-
+			int connectionCount = 0;
 			for (const auto& pair : pipes)
 				if (!pair.second.FreeConnections())
-					cout << "Pipe " << pair.first << " - CS1 " << pair.second.csId1 << " - CS2 " << pair.second.csId2 << endl;
+				{
+					cout  << "CS1 " << pair.second.csId1 << "- Pipe " << pair.first << " - CS2 " << pair.second.csId2 << endl;
+					connectionCount++;
+				}
+			cout << "Found " << connectionCount << " connections." << endl;
 			logger.log("View gas Network finish");
+		}
+		break;
+		case 11:
+		{
+			
+			cout << "[ Delete gas Network ]" << endl;
+			logger.log("Delete gas Network start");
+			if (pipes.size() == 0)
+				cout << "Pipe not found." << endl;
+			else {
+				cout << "Enter the ID of the pipe you want to delete: ";
+				int deleteGasNetwork;
+				InputCorrectNumber(deleteGasNetwork);
+				while (pipes.find(deleteGasNetwork) == pipes.end())
+				{
+					cout << "Error!\nPipe with this Id not found." << endl
+						<< "Please enter correct data: ";
+					InputCorrectNumber(deleteGasNetwork);
+				}
+				if (pipes[deleteGasNetwork].FreeConnections()) {
+					cout << "Pipe not connected." << endl;
+				}
+				else {
+					pipes[deleteGasNetwork].DeleteConnection();
+					cout << "Connection deleted." << endl;
+				}
+			}
+		}
+		break;
+		case 12:
+		{
+			cout << "[ Topological Sort ]" << endl;
+			// Вызов функции topologicalSort
+			vector<int> sortedStations = topologicalSort(pipes, compressorStations);
+
+			// Вывод отсортированных станций
+			for (int stationId : sortedStations) {
+				cout << stationId << " ";
+			}
+			cout << endl;
 		}
 		break;
 		default:

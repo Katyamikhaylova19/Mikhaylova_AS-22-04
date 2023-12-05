@@ -1,13 +1,7 @@
 [0] Start
-[1] Load start
-[2] Load finish
-[3] Connect the pipe and compressor stations start
-[4] Connect the pipe and compressor stations finish
+[1] View gas Network start
+[2] View gas Network finish
+[3] Load start
+[4] Load finish
 [5] View gas Network start
 [6] View gas Network finish
-[7] Connect the pipe and compressor stations start
-[8] Connect the pipe and compressor stations finish
-[9] Connect the pipe and compressor stations start
-[10] Connect the pipe and compressor stations finish
-[11] View gas Network start
-[12] View gas Network finish
